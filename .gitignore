@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtualenv
+.venv/
+venv/
+
+# Logs (created at runtime)
+logs/
+
+# Claude
+.claude/
+
+# OS / editor
+.DS_Store
+*.swp

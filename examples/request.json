@@ -1,0 +1,60 @@
+{
+  "taxonomy": {
+    "taxonomy_id": "fashion_v1",
+    "name": "Fashion Product Taxonomy",
+    "version": "1.0.0",
+    "categories": [
+      {
+        "id": "shoes",
+        "label": "Shoes",
+        "attributes": [
+          {
+            "key": "color",
+            "label": "Color",
+            "type": "multi_option",
+            "required": true,
+            "allow_custom_values": false,
+            "options": ["black", "white", "brown", "beige", "red", "blue", "green", "multicolor"]
+          },
+          {
+            "key": "material",
+            "label": "Material",
+            "type": "multi_option",
+            "required": false,
+            "allow_custom_values": true,
+            "options": ["leather", "suede", "canvas", "rubber", "synthetic"]
+          },
+          {
+            "key": "gender",
+            "label": "Gender",
+            "type": "single_option",
+            "required": false,
+            "allow_custom_values": false,
+            "options": ["men", "women", "unisex", "kids"]
+          },
+          {
+            "key": "style",
+            "label": "Style",
+            "type": "multi_option",
+            "required": false,
+            "allow_custom_values": true,
+            "options": ["casual", "formal", "sport", "streetwear", "outdoor"]
+          },
+          {
+            "key": "description_tags",
+            "label": "Free Tags",
+            "type": "free_text_list",
+            "required": false,
+            "max_items": 10
+          }
+        ]
+      }
+    ]
+  },
+  "meta": {
+    "title": "Classic low-top sneaker",
+    "brand": "Acme"
+  },
+  "known": {},
+  "tagging": true
+}

@@ -1,0 +1,12 @@
+# Model (SigLIP zero-shot)
+torch
+transformers
+sentencepiece
+protobuf
+pillow
+
+# API
+fastapi
+uvicorn[standard]
+python-multipart
+requests
