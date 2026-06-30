@@ -17,3 +17,8 @@ logs/
 # OS / editor
 .DS_Store
 *.swp
+
+# Local dev only — not pushed
+tests/
+scripts/eval.py
+scripts/build_testset.py
