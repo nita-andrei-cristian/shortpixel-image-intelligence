@@ -7,19 +7,23 @@ taxonomy; it returns one enriched JSON that maps the image onto that taxonomy. E
 ## Pipeline
 
 ```
-image ──► ZeroShotTagger (SigLIP) ──► picks color / category / material / style / gender
-                                          from the taxonomy's options
-                                                    │
-                                                    ▼
-                                  Taxonomy mapping ──► enriched JSON
+image ──►  analysis stage  ──►  attributes selected from the taxonomy's options
+           (model backend)                        │
+                                                  ▼
+                                 Taxonomy mapping ──► enriched JSON
 ```
 
-- **`app/stages/`** — `ZeroShotTagger`: SigLIP zero-shot selection over the taxonomy options
-  (every attribute, including color, is a named-option pick).
+The pipeline is backend-agnostic: an analysis stage turns an image into taxonomy selections, and
+the rest maps those onto the caller's taxonomy. Today that stage is a SigLIP zero-shot tagger; a
+different backend — e.g. a vision-language model — can slot in behind the same interface without
+changing the API.
+
+- **`app/stages/`** — analysis backends. Current: `ZeroShotTagger` (SigLIP zero-shot selection over
+  the taxonomy options; every attribute, including color, is a named-option pick).
 - **`app/classes/`** — building blocks: `AIModel` (base), `Taxonomy`, `ProductIntelligencePipeline`.
 - **`legacy/`** — the old BiRefNet + kmeans color stack, kept for reference, not wired in.
 
-The tagger subclasses `AIModel` (lazy weight loading), so swapping or adding a model is one new
+Every backend subclasses `AIModel` (lazy weight loading), so adding or swapping a model is one new
 subclass — the API contract doesn't change.
 
 ## Setup
@@ -39,12 +43,7 @@ decides whether to run it via the `tagging` field (see below).
 
 ## Use
 
-```bash
-bash examples/demo.sh                          # multipart upload, default sample image
-bash examples/demo.sh examples/images/photo.jpg
-```
-
-Or by image URL (JSON body):
+By image URL (JSON body):
 
 ```bash
 curl -X POST localhost:8000/analyze -H 'content-type: application/json' \
@@ -82,16 +81,12 @@ values (for search) — not generated.
 }
 ```
 
-## Expose over SSH
-
-```bash
-ssh -L 8000:localhost:8000 user@host    # reach the host's API locally
-ssh -R 8000:localhost:8000 user@host    # publish a local instance through a jump host
-```
-
 ## Config (`app/settings.py`)
 
-- `DEVICE` — `cpu` (default) or `cuda`.
-- `TAG_THRESHOLD` — min score for a `multi_option` value to be kept.
+Runs on CPU. A few constants live in `app/settings.py`:
+
+- `SIGLIP_ID` — which SigLIP checkpoint to load.
+- `TEXT_CACHE_MAX` — how many text embeddings to keep cached.
+- `HINT_BOOST` — nudge for an option named in the request title (0 disables).
 
 Whether the tagger runs is a **per-request** choice (`tagging` in the payload), not a server setting.
