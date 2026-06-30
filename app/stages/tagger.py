@@ -47,7 +47,7 @@ class ZeroShotTagger(AIModel):
         model = self.model  # triggers lazy load (and sets self.processor)
         inputs = self.processor(images=image, return_tensors="pt").to(self.device)
         with torch.no_grad():
-            feats = model.get_image_features(**inputs).pooler_output
+            feats = _pooled(model.get_image_features(**inputs))
         return _l2norm(feats)
 
     def _encode_texts(self, labels: list[str]):
@@ -60,7 +60,7 @@ class ZeroShotTagger(AIModel):
             model = self.model
             inputs = self.processor(text=misses, return_tensors="pt", padding="max_length").to(self.device)
             with torch.no_grad():
-                feats = _l2norm(model.get_text_features(**inputs).pooler_output)
+                feats = _l2norm(_pooled(model.get_text_features(**inputs)))
             for label, vec in zip(misses, feats):
                 _TEXT_CACHE.put((self.model_id, label), vec)
         return torch.stack([_TEXT_CACHE.get((self.model_id, l)) for l in labels])
@@ -131,6 +131,11 @@ class ZeroShotTagger(AIModel):
         if not any(boosts):
             return None
         return torch.tensor(boosts, device=self.device)
+
+
+def _pooled(out):
+    # transformers 5.x returns an object with .pooler_output; 4.x returns the tensor itself.
+    return out.pooler_output if hasattr(out, "pooler_output") else out
 
 
 def _l2norm(feats):
