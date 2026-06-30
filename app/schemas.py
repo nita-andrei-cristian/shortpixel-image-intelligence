@@ -1,16 +1,18 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
 class Meta(BaseModel):
-    title: str | None = None
-    description: str | None = None
-    sku: str | None = None
-    brand: str | None = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    sku: Optional[str] = None
+    brand: Optional[str] = None
 
 
 class AnalyzePayload(BaseModel):
     taxonomy: dict
-    image_url: str | None = None
+    image_url: Optional[str] = None
     meta: Meta = Meta()
     known: dict = {}
     tagging: bool = True  # run the zero-shot tagger; False -> color + provided only
@@ -19,7 +21,7 @@ class AnalyzePayload(BaseModel):
 class AttributeResult(BaseModel):
     value: list[str]
     source: str
-    confidence: float | None = None
+    confidence: Optional[float] = None
 
 
 class AnalyzeResponse(BaseModel):
@@ -28,4 +30,4 @@ class AnalyzeResponse(BaseModel):
     attributes: dict[str, AttributeResult]
     tags: list[str]
     source: str
-    processing_ms: int | None = None
+    processing_ms: Optional[int] = None
