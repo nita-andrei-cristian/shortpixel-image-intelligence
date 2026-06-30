@@ -22,3 +22,4 @@ logs/
 tests/
 scripts/eval.py
 scripts/build_testset.py
+examples/
